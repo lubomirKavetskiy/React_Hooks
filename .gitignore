@@ -1,0 +1,13 @@
+# project source
+/build
+
+#dependencies
+/node_modules
+
+# mist
+.vscode
+.DS_Store
+npm-debug.log
+.awcache
+.idea
+.env
