@@ -1,17 +1,14 @@
-import React, { useState } from "react";
-import { usePrevVal } from "./useHooks";
+import React, { useRef } from "react";
 
 import "./App.css";
 
 const App = () => {
-  const [count, setCount] = useState(0);
-  const prevVal = usePrevVal(count);
+  const inputRef = useRef();
 
   return (
     <>
-      <span>prevValue: {prevVal}</span>
-      <br />
-      <button onClick={() => setCount((c) => c + 1)}>click</button>
+      <input ref={inputRef} type="email" name="email" />
+      <button onClick={() => inputRef.current.focus()}>setFocus</button>
     </>
   );
 };
