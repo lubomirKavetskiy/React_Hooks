@@ -1,28 +1,23 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-import { useForm } from "./useHooks";
+import { useFetch } from "./useHooks";
 import "./App.css";
 
+const API = (count) => `http://numbersa.com/${count}/trivia`;
+
 const App = () => {
-  const [values, onChange] = useForm({ email: "", password: "" });
+  const [count, setCount] = useState(JSON.parse(localStorage.getItem("count")));
+  const { data, loading } = useFetch(API(count));
+
+  useEffect(() => {
+    localStorage.setItem("count", JSON.stringify(count));
+  }, [count]);
 
   return (
     <>
-      <input
-        type="text"
-        name="email"
-        type="email"
-        value={values.email}
-        onChange={onChange}
-      />
-      <br />
-      <input
-        type="text"
-        name="password"
-        type="password"
-        value={values.password}
-        onChange={onChange}
-      />{" "}
+      <button onClick={() => setCount((c) => c + 1)}>increment</button>
+      {loading ? "loading..." : data}
+      <button onClick={() => setCount(0)}>reset to '0'</button>
     </>
   );
 };
