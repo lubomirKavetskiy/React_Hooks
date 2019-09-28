@@ -1,14 +1,22 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
+
+import { Hello } from "./Hello";
 
 import "./App.css";
 
 const App = () => {
-  const inputRef = useRef();
+  const [showHello, setShowHello] = useState(true);
 
   return (
     <>
-      <input ref={inputRef} type="email" name="email" />
-      <button onClick={() => inputRef.current.focus()}>setFocus</button>
+      <button
+        onClick={() => {
+          setShowHello((s) => !s);
+        }}
+      >
+        show hello
+      </button>
+      {showHello && <Hello />}
     </>
   );
 };
