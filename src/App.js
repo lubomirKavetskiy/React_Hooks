@@ -1,39 +1,62 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useReducer } from "react";
 
-import { useFetch } from "./useHooks";
 import "./App.css";
 
-function computeLongestWord(arr) {
-  if (!arr) {
-    return [];
+const actionTypes = {
+  addTodo: "ADD_TODO",
+  toggleTodo: "TOGGLE_TODO"
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case actionTypes.addTodo:
+      return {
+        todos: [...state.todos, { text: action.text, completed: false }],
+        todoCount: state.todoCount + 1
+      };
+    case actionTypes.toggleTodo:
+      return {
+        ...state,
+        todos: state.todos.map((t, idx) =>
+          action.idx === idx ? { ...t, completed: !t.completed } : t
+        )
+      };
+    default:
+      return state;
   }
-
-  console.log("computing longest word");
-
-  let longestWord = "";
-
-  JSON.parse(arr).forEach(({ body }) =>
-    body.split(" ").forEach((word) => {
-      if (word.length > longestWord.length) {
-        longestWord = word;
-      }
-    })
-  );
-
-  return longestWord;
 }
 
 const App = () => {
-  const [count, setCount] = useState(0);
-
-  const { data } = useFetch("https://jsonplaceholder.typicode.com/posts");
-  const longestWord = useMemo(() => computeLongestWord(data), [data]);
-
+  const [{ todos, todoCount }, dispatch] = useReducer(reducer, {
+    todos: [],
+    todoCount: 0
+  });
+  const [text, setText] = useState("");
   return (
     <div>
-      <div>count: {count}</div>
-      <button onClick={() => setCount(count + 1)}>increment</button>
-      <div>{longestWord}</div>
+      <span>number of todos: {todoCount}</span>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          dispatch({ type: actionTypes.addTodo, text });
+          setText("");
+        }}
+      >
+        <input value={text} onChange={(e) => setText(e.target.value)} />
+      </form>
+      <ul>
+        {todos.map((t, idx) => (
+          <li
+            key={idx}
+            onClick={() => dispatch({ type: actionTypes.toggleTodo, idx })}
+            style={{
+              textDecoration: t.completed ? "line-through" : ""
+            }}
+          >
+            {t.text}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
